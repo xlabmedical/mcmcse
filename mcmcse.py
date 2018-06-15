@@ -1,6 +1,24 @@
 import numpy as np
 from scipy.stats import gaussian_kde
 
+def _get_sizes(n,size):
+  """
+  Internal method
+  """
+  if size == "sqroot":
+    b=np.floor(np.sqrt(n))
+    a=np.floor(n/b)
+  elif size == "cuberoot":
+    b=np.floor(n**(1/3))
+    a=np.floor(n/b)
+  else:
+    try:
+      b=np.floor(size)
+      a=np.floor(n/b)
+    except TypeError:
+      raise TypeError("Parameter size must be numeric if it is not 'sqroot' or 'cuberoot'")
+  return int(a), int(b), int(a*b)
+
 def mcse(x, size = "sqroot", g=None, method="bm"):
   """
   Computes the MCMC estimate of expectation of g, with standard error
@@ -31,21 +49,7 @@ def mcse(x, size = "sqroot", g=None, method="bm"):
     g=lambda x:x
   n=len(x)
   shape=x.shape
-  if size == "sqroot":
-    b=np.floor(np.sqrt(n))
-    a=np.floor(n/b)
-  elif size == "cuberoot":
-    b=np.floor(n**(1/3))
-    a=np.floor(n/b)
-  else:
-    try:
-      b=np.floor(size)
-      a=np.floor(n/b)
-    except TypeError:
-      raise TypeError("Parameter size must be numeric if it is not 'sqroot' or 'cuberoot'")
-  a=int(a)
-  b=int(b)
-  n_=a*b
+  a,b,n_=_get_sizes(n,size)
   if method == "bm":
     g_x=g(x)
     y=np.mean(np.reshape(g_x[:n_],(a,b,*shape[1:])),axis=1)
@@ -62,7 +66,6 @@ def mcse(x, size = "sqroot", g=None, method="bm"):
     alpha=np.arange(1,b+1)
     alpha=(1+np.cos(np.pi*alpha/b))/2*(1-alpha/n)
     mu_hat=np.mean(g(x),axis=0)
-    print(1)
     R=np.stack([np.mean((g(x[:(n - j)]) - mu_hat) * (g(x[(j):n]) - mu_hat),axis=0) for j in range(b+1)],axis=0)
     perm=np.arange(1,len(R.shape))
     R_0=R[0]
@@ -122,21 +125,7 @@ def mcse_p(x, p, size = "sqroot", g=None, method="bm"):
     g=lambda x:x
   n=len(x)
   shape=x.shape
-  if size == "sqroot":
-    b=np.floor(np.sqrt(n))
-    a=np.floor(n/b)
-  elif size == "cuberoot":
-    b=np.floor(n**(1/3))
-    a=np.floor(n/b)
-  else:
-    try:
-      b=np.floor(size)
-      a=np.floor(n/b)
-    except TypeError:
-      raise TypeError("Parameter size must be numeric if it is not 'sqroot' or 'cuberoot'")
-  a=int(a)
-  b=int(b)
-  n_=a*b
+  a,b,n_=_get_sizes(n,size)
 #
   counting=lambda X,x, axis=0: np.sum(X<=x,axis=axis)
   quant=lambda X, axis=0: np.percentile(X,p,axis=axis)
