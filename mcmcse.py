@@ -42,6 +42,19 @@ def mcse(x, size = "sqroot", g=None, method="bm"):
         * ess.shape ==(n1,n2,...,nk)
     Note when they have dimension zero, numerics are returned    
   """
+  def _internal_mu_se_from_alpha(alpha):
+    """
+    Internal function
+    """
+    mu_hat=np.mean(g(x),axis=0)
+    R=np.stack([np.mean((g(x[:(n - j)]) - mu_hat) * (g(x[(j):n]) - mu_hat),axis=0) for j in range(b+1)],axis=0)
+    perm=np.arange(1,len(R.shape))
+    R_0=R[0]
+    R_=np.transpose(R[1:],axes=(*perm,0))
+    var_hat=R_0+2*np.sum(alpha*R_,axis=-1)
+    se=np.sqrt(var_hat/n)
+    return mu_hat,se
+#    
   valid_methods=("bm", "obm", "tukey", "bartlett")
   assert method in valid_methods, "%s in not a valid method"%method
   if not callable(g):
@@ -64,23 +77,11 @@ def mcse(x, size = "sqroot", g=None, method="bm"):
   elif method == "tukey":
     alpha=np.arange(1,b+1)
     alpha=(1+np.cos(np.pi*alpha/b))/2*(1-alpha/n)
-    mu_hat=np.mean(g(x),axis=0)
-    R=np.stack([np.mean((g(x[:(n - j)]) - mu_hat) * (g(x[(j):n]) - mu_hat),axis=0) for j in range(b+1)],axis=0)
-    perm=np.arange(1,len(R.shape))
-    R_0=R[0]
-    R_=np.transpose(R[1:],axes=(*perm,0))
-    var_hat=R_0+2*np.sum(alpha*R_,axis=-1)
-    se=np.sqrt(var_hat/n)
+    mu_hat,se=_internal_mu_se_from_alpha(alpha)
   else: #method == "bartlett"
     alpha=np.arange(1,b+1)
     alpha=(1-np.abs(alpha)/b)*(1-alpha/n)
-    mu_hat=np.mean(g(x),axis=0)
-    R=np.stack([np.mean((g(x[:(n - j)]) - mu_hat) * (g(x[(j):n]) - mu_hat),axis=0) for j in range(b+1)],axis=0)
-    perm=np.arange(1,len(R.shape))
-    R_0=R[0]
-    R_=np.transpose(R[1:],axes=(*perm,0))
-    var_hat=R_0+2*np.sum(alpha*R_,axis=-1)
-    se=np.sqrt(var_hat/n)
+    mu_hat,se=_internal_mu_se_from_alpha(alpha)
   return mu_hat,se
 
 def mcse_mat(*args,**kwargs):
