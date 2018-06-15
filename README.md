@@ -1,16 +1,23 @@
 # MCMCSE
 
-A python/numpy implementation of [mcmcse.r](https://cran.r-project.org/web/packages/mcmcse/index.html), extended to support numpy broadcasting.
+Provides tools for computing Monte Carlo standard errors (MCSE) in Markov chain Monte Carlo (MCMC). A python/numpy implementation of [mcmcse.r](https://cran.r-project.org/web/packages/mcmcse/index.html), extended to support numpy broadcasting.
 
 It implements the following methods:
 
-  * [mcse](#mcse):Computes the MCMC estimate of expectation of g, with standard error.
-  * [mcse_mat](#mcse_mat): Only for mimicking mcmcse.R, as the function mcse supports numpy arrays of any shape. See [mcse](#mcse).
-  * [mcse_p](#mcse_p):Computes the MCMC estimate of percentile p, with standard error.
-  * [mcse\_p\_mat](#mcse\_p\_mat): Only for mimicking mcmcse.r, as the function mcse_p supports numpy arrays of all shapes. See [mcse_p](#mcse_p).
-  * [mcse_q](mcse_q): Computes the MCMC estimate of quantile q, with standard error.
-  * [mcse\_q\_mat](mcse\_q\_mat): Only for mimicking mcmcse.r, as the function mcse_q supports numpy arrays of all shapes. See [mcse_q](mcse_q).
-  * [ess](ess): Estimate effective sample size (ESS) as described in Gong and Felgal (2015).
+  * [mcse](#mcse):
+    * Computes the MCMC estimate of expectation of g, with standard error.
+  * [mcse_mat](#mcse_mat):
+    * Only for mimicking mcmcse.R, as the function mcse supports numpy arrays of any shape. See [mcse](#mcse).
+  * [mcse_p](#mcse_p):
+    * Computes the MCMC estimate of percentile p, with standard error.
+  * [mcse\_p\_mat](#mcse\_p\_mat):
+    * Only for mimicking mcmcse.r, as the function mcse_p supports numpy arrays of all shapes. See [mcse_p](#mcse_p).
+  * [mcse_q](mcse_q):
+    * Computes the MCMC estimate of quantile q, with standard error.
+  * [mcse\_q\_mat](mcse\_q\_mat):
+    * Only for mimicking mcmcse.r, as the function mcse_q supports numpy arrays of all shapes. See [mcse_q](mcse_q).
+  * [ess](ess):
+    * Estimate effective sample size (ESS) as described in Gong and Felgal (2015).
 
 
 See bellow for documentation.
