@@ -20,7 +20,7 @@ It implements the following methods:
     * Estimate effective sample size (ESS) as described in Gong and Felgal (2015).
 
 
-See bellow for documentation.
+See bellow for documentation, or follow the respected links.
 
 ## Methods
 
