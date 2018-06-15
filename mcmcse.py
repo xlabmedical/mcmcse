@@ -43,7 +43,6 @@ def mcse(x, size = "sqroot", g=None, method="bm"):
     Note when they have dimension zero, numerics are returned    
   """
   valid_methods=("bm", "obm", "tukey", "bartlett")
-  valid_sizes=("sqroot","cuberoot")
   assert method in valid_methods, "%s in not a valid method"%method
   if not callable(g):
     g=lambda x:x
@@ -119,7 +118,6 @@ def mcse_p(x, p, size = "sqroot", g=None, method="bm"):
   """
   assert 0<p<=100, "Percentile must be between 0 and 100"
   valid_methods=("bm", "obm", "sub")
-  valid_sizes=("sqroot","cuberoot")
   assert method in valid_methods, "%s in not a valid method"%method
   if not callable(g):
     g=lambda x:x
@@ -127,7 +125,6 @@ def mcse_p(x, p, size = "sqroot", g=None, method="bm"):
   shape=x.shape
   a,b,n_=_get_sizes(n,size)
 #
-  counting=lambda X,x, axis=0: np.sum(X<=x,axis=axis)
   quant=lambda X, axis=0: np.percentile(X,p,axis=axis)
   if method == "bm":
     g_x=g(x)
