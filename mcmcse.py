@@ -116,6 +116,20 @@ def mcse_p(x, p, size = "sqroot", g=None, method="bm"):
         * ess.shape ==(n1,n2,...,nk)
     Note when they have dimension zero, numerics are returned    
   """
+  def _internal_se_from_var(xi_hat,var_hat):
+    """
+    Internal function, used for (o)bm
+    """
+    x_tmp=x.reshape((x.shape[0],-1)).T
+    xi_hat_=xi_hat
+    try:
+      xi_hat[0]
+    except IndexError:
+      xi_hat_=np.array([xi_hat])
+    f_hat=np.squeeze(np.stack(((gaussian_kde(sample))(hat) for sample,hat in zip(x_tmp,xi_hat_)),axis=0))
+    f_hat=f_hat.reshape(x.shape[1:])
+    return np.sqrt(var_hat/n)/f_hat
+#
   assert 0<p<=100, "Percentile must be between 0 and 100"
   valid_methods=("bm", "obm", "sub")
   assert method in valid_methods, "%s in not a valid method"%method
@@ -132,30 +146,14 @@ def mcse_p(x, p, size = "sqroot", g=None, method="bm"):
     y=np.mean(np.reshape(g_x[:n_]<=xi_hat,(a,b,*shape[1:])),axis=1)
     mu_hat=np.mean(y,axis=0)
     var_hat=b*np.sum((y-mu_hat)**2,axis=0)/(a-1)
-    x_tmp=x.reshape((x.shape[0],-1)).T
-    try:
-      xi_hat_=xi_hat
-      xi_hat[0]
-    except IndexError:
-      xi_hat_=np.array([xi_hat])
-    f_hat=np.squeeze(np.stack(((gaussian_kde(sample))(hat) for sample,hat in zip(x_tmp,xi_hat_)),axis=0))
-    f_hat=f_hat.reshape(x.shape[1:])
-    se=np.sqrt(var_hat/n)/f_hat
+    se=_internal_se_from_var(xi_hat,var_hat)
   elif method == "obm":
     a=n-b
     xi_hat=quant(g(x))
     y=np.stack([np.mean(g(x[k:k+b])<=xi_hat,axis=0) for k in range(a)],axis=0)
     mu_hat=np.mean(y,axis=0)
     var_hat=n*b*np.sum((y-mu_hat)**2,axis=0)/(a-1)/a
-    x_tmp=x.reshape((x.shape[0],-1)).T
-    try:
-      xi_hat_=xi_hat
-      xi_hat[0]
-    except IndexError:
-      xi_hat_=np.array([xi_hat])
-    f_hat=np.squeeze(np.stack(((gaussian_kde(sample))(hat) for sample,hat in zip(x_tmp,xi_hat_)),axis=0))
-    f_hat=f_hat.reshape(x.shape[1:])
-    se=np.sqrt(var_hat/n)/f_hat
+    se=_internal_se_from_var(xi_hat,var_hat)
   else:#method == "sub"
     a=n-b
     xi_hat=quant(g(x))
