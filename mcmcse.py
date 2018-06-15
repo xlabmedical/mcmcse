@@ -45,7 +45,7 @@ def mcse(x, size="sqroot", g=None, method="bm"):
           * ess.shape ==(n1,n2,...,nk)
       Note when they have dimension zero, numerics are returned    
     """
-    def _internal_mu_se_from_alpha(alpha):
+    def _mu_se_from_alpha(alpha):
         """
         Internal function
         """
@@ -81,11 +81,11 @@ def mcse(x, size="sqroot", g=None, method="bm"):
     elif method == "tukey":
         alpha = np.arange(1, b+1)
         alpha = (1+np.cos(np.pi*alpha/b))/2*(1-alpha/n)
-        mu_hat, se = _internal_mu_se_from_alpha(alpha)
+        mu_hat, se = _mu_se_from_alpha(alpha)
     else:  # method == "bartlett"
         alpha = np.arange(1, b+1)
         alpha = (1-np.abs(alpha)/b)*(1-alpha/n)
-        mu_hat, se = _internal_mu_se_from_alpha(alpha)
+        mu_hat, se = _mu_se_from_alpha(alpha)
     return mu_hat, se
 
 
@@ -123,7 +123,7 @@ def mcse_p(x, p, size="sqroot", g=None, method="bm"):
           * ess.shape ==(n1,n2,...,nk)
       Note when they have dimension zero, numerics are returned    
     """
-    def _internal_se_from_var(xi_hat, var_hat):
+    def _se_from_var(xi_hat, var_hat):
         """
         Internal function, used for (o)bm
         """
@@ -138,8 +138,7 @@ def mcse_p(x, p, size="sqroot", g=None, method="bm"):
         f_hat = f_hat.reshape(x.shape[1:])
         return np.sqrt(var_hat/n)/f_hat
 #
-
-    def quant(X, axis=0):
+    def _quant(X, axis=0):
         return np.percentile(X, p, axis=axis)
 #
     assert 0 < p <= 100, "Percentile must be between 0 and 100"
@@ -153,23 +152,23 @@ def mcse_p(x, p, size="sqroot", g=None, method="bm"):
 #
     if method == "bm":
         g_x = g(x)
-        xi_hat = quant(g_x)
+        xi_hat = _quant(g_x)
         y = np.mean(np.reshape(g_x[:n_] <= xi_hat, (a, b, *shape[1:])), axis=1)
         mu_hat = np.mean(y, axis=0)
         var_hat = b*np.sum((y-mu_hat)**2, axis=0)/(a-1)
-        se = _internal_se_from_var(xi_hat, var_hat)
+        se = _se_from_var(xi_hat, var_hat)
     elif method == "obm":
         a = n-b
-        xi_hat = quant(g(x))
+        xi_hat = _quant(g(x))
         y = np.stack([np.mean(g(x[k:k+b]) <= xi_hat, axis=0)
                       for k in range(a)], axis=0)
         mu_hat = np.mean(y, axis=0)
         var_hat = n*b*np.sum((y-mu_hat)**2, axis=0)/(a-1)/a
-        se = _internal_se_from_var(xi_hat, var_hat)
+        se = _se_from_var(xi_hat, var_hat)
     else:  # method == "sub"
         a = n-b
-        xi_hat = quant(g(x))
-        y = np.stack([quant(g(x[k:k+b])) for k in range(a)], axis=0)
+        xi_hat = _quant(g(x))
+        y = np.stack([_quant(g(x[k:k+b])) for k in range(a)], axis=0)
         mu_hat = np.mean(y, axis=0)
         var_hat = n*b*np.sum((y-mu_hat)**2, axis=0)/(a-1)/a
         se = np.sqrt(var_hat/n)
