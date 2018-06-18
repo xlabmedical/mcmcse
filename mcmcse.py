@@ -49,9 +49,10 @@ def mcse(x, size="sqroot", g=None, method="bm"):
         """
         Internal function
         """
+        g_x=g(x)
         mu_hat = np.mean(g(x), axis=0)
-        R = np.stack([np.mean((g(x[:(n - j)]) - mu_hat) *
-                              (g(x[(j):n]) - mu_hat), axis=0) for j in range(b+1)], axis=0)
+        R = np.stack([np.mean((g_x[:(n - j)] - mu_hat) *
+                              (g_x[(j):n] - mu_hat), axis=0) for j in range(b+1)], axis=0)
         perm = np.arange(1, len(R.shape))
         R_0 = R[0]
         R_ = np.transpose(R[1:], axes=(*perm, 0))
@@ -74,8 +75,9 @@ def mcse(x, size="sqroot", g=None, method="bm"):
         se = np.sqrt(var_hat/n)
     elif method == "obm":
         a = n-b
-        y = np.stack([np.mean(g(x[k:k+b]), axis=0) for k in range(a)], axis=0)
-        mu_hat = np.mean(g(x), axis=0)
+        g_x=g(x)
+        y = np.stack([np.mean(g_x[k:k+b], axis=0) for k in range(a)], axis=0)
+        mu_hat = np.mean(g_x, axis=0)
         var_hat = n*b*np.sum((y-mu_hat)**2, axis=0)/(a-1)/a
         se = np.sqrt(var_hat/n)
     elif method == "tukey":
@@ -150,8 +152,8 @@ def mcse_p(x, p, size="sqroot", g=None, method="bm"):
     shape = x.shape
     a, b, n_ = _get_sizes(n, size)
 #
+    g_x = g(x)
     if method == "bm":
-        g_x = g(x)
         xi_hat = _quant(g_x)
         y = np.mean(np.reshape(g_x[:n_] <= xi_hat, (a, b, *shape[1:])), axis=1)
         mu_hat = np.mean(y, axis=0)
@@ -159,16 +161,16 @@ def mcse_p(x, p, size="sqroot", g=None, method="bm"):
         se = _se_from_var(xi_hat, var_hat)
     elif method == "obm":
         a = n-b
-        xi_hat = _quant(g(x))
-        y = np.stack([np.mean(g(x[k:k+b]) <= xi_hat, axis=0)
+        xi_hat = _quant(g_x)
+        y = np.stack([np.mean(g_x[k:k+b] <= xi_hat, axis=0)
                       for k in range(a)], axis=0)
         mu_hat = np.mean(y, axis=0)
         var_hat = n*b*np.sum((y-mu_hat)**2, axis=0)/(a-1)/a
         se = _se_from_var(xi_hat, var_hat)
     else:  # method == "sub"
         a = n-b
-        xi_hat = _quant(g(x))
-        y = np.stack([_quant(g(x[k:k+b])) for k in range(a)], axis=0)
+        xi_hat = _quant(g_x)
+        y = np.stack([_quant(g_x[k:k+b]) for k in range(a)], axis=0)
         mu_hat = np.mean(y, axis=0)
         var_hat = n*b*np.sum((y-mu_hat)**2, axis=0)/(a-1)/a
         se = np.sqrt(var_hat/n)
