@@ -1,3 +1,9 @@
+"""
+Provides tools for computing Monte Carlo standard errors (MCSE) in Markov chain Monte Carlo (MCMC).
+A python/numpy implementation of mcmcse.r, extended to support numpy broadcasting.
+
+By Žiga Sajovic
+"""
 import numpy as np
 from scipy.stats import gaussian_kde
 
