@@ -49,10 +49,14 @@ See bellow for documentation, or follow the respected links.
       * ess.shape ==(n1,n2,...,nk)
   Note when they have dimension zero, numerics are returned
 
+---
+
 ### mcse_mat
 
   Only for mimicking mcmcse.R, as the function mcse supports numpy arrays of any shape. It thus only forwards its arguments to mcse.
   See mcse.
+
+---
 
 ### mcse_p
 
@@ -81,10 +85,14 @@ See bellow for documentation, or follow the respected links.
       * ess.shape ==(n1,n2,...,nk)
   Note when they have dimension zero, numerics are returned
 
+---
+
 ### mcse\_p\_mat
 
 Only for mimicking mcmcse.r, as the function mcse\_p supports numpy arrays of all shapes. It thus only forwards its arguments to mcse\_p.
 See mcse_p
+
+---
 
 ### mcse_q
 
@@ -113,10 +121,14 @@ See mcse_p
       * ess.shape ==(n1,n2,...,nk)
   Note when they have dimension zero, numerics are returned
 
+---
+
 ### mcse\_q\_mat
 
 Only for mimicking mcmcse.r, as the function mcse\_q supports numpy arrays of all shapes. It thus only forwards its arguments to mcse\_q.
 See mcse_q.
+
+---
 
 ### ess
 
