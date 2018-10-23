@@ -32,7 +32,7 @@ def mcse(x, size="sqroot", g=None, method="bm"):
   """
   Computes the MCMC estimate of expectation of g, with standard error
   NOTE: function broadcasts over numpy arrays
-  Args:
+  **Args**:
     * x: data
         * if one sample is of shape (n1,n2, ..., nk)
           than x.shape == (n_samples, n1,n2,...nk)
@@ -44,7 +44,7 @@ def mcse(x, size="sqroot", g=None, method="bm"):
     * method: which method to use
         * method in ["bm", "obm", "tukey", "bartlett"]
           default is bm
-  Returns:
+  **Returns**:
     * est: estimated expectation of g
         * est.shape == (n1,n2,...nk)
     * ess: estimated standard error, of the expectation of g
@@ -110,7 +110,7 @@ def mcse_p(x, p, size="sqroot", g=None, method="bm"):
   """
   Computes the MCMC estimate of percentile p, with standard error
   NOTE: function broadcasts over numpy arrays
-  Args:
+  **Args**:
     * x: data
         * if one sample is of shape (n1,n2, ..., nk)
           than x.shape == (n_samples, n1,n2,...nk)
@@ -124,7 +124,7 @@ def mcse_p(x, p, size="sqroot", g=None, method="bm"):
     * method: which method to use
         * method in ["bm", "obm", "sub"]
           default is bm
-  Returns:
+  **Returns**:
     * est: estimated percentile
         * est.shape == (n1,n2,...nk)
     * ess: estimated standard error of the percentile
@@ -197,7 +197,7 @@ def mcse_q(x, q, *args, **kwargs):
   """
   Computes the MCMC estimate of quantile q, with standard error
   NOTE: function broadcasts over numpy arrays
-  Args:
+  **Args**:
     * x: data
         * if one sample is of shape (n1,n2, ..., nk)
           than x.shape == (n_samples, n1,n2,...nk)
@@ -211,7 +211,7 @@ def mcse_q(x, q, *args, **kwargs):
     * method: which method to use
         * method in ["bm", "obm", "sub"]
           default is bm
-  Returns:
+  **Returns**:
     * est: estimated quantile
         * est.shape == (n1,n2,...nk)
     * ess: estimated standard error of the quantile
@@ -234,14 +234,14 @@ def mcse_q_mat(*args, **kwargs):
 def ess(x, g=None, **kwargs):
   """
   Estimate effective sample size (ESS) as described in Gong and Felgal (2015).
-  Args:
+  **Args**:
     * x: data
         * if one sample is of shape (n1,n2, ..., nk)
           than x.shape == (n_samples, n1,n2,...nk)
     * g: function which expectation is to be computed and estimated
         * if a sample is of shape (n1,...,nk), g has to handle such inputs
     * kwargs: arguments to be passed to mcse
-  Returns:
+  **Returns**:
     * ess: estimated sample size
       * ess.shape == (n1,n2,...,nk)
   """
